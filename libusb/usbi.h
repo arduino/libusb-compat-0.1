@@ -56,5 +56,14 @@ struct usb_dev_handle {
 	int last_claimed_interface;
 };
 
+/* Inside the libusb-compat code, mark all public functions as follows:
+ *   return_type API_EXPORTED function_name(params) { ... }
+ * But if the function returns a pointer, mark it as follows:
+ *   DEFAULT_VISIBILITY return_type * LIBUSB_CALL function_name(params) { ... }
+ * In the libusb-compat public header, mark all declarations as:
+ *   return_type LIBUSB_CALL function_name(params);
+ */
+#define API_EXPORTED LIBUSB_CALL DEFAULT_VISIBILITY
+
 #endif
 

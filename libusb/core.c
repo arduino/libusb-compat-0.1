@@ -55,7 +55,7 @@ enum usbi_log_level {
 #define usbi_warn(fmt...) _usbi_log(LOG_LEVEL_WARNING, fmt)
 #define usbi_err(fmt...) _usbi_log(LOG_LEVEL_ERROR, fmt)
 
-API_EXPORTED struct usb_bus *usb_busses = NULL;
+DEFAULT_VISIBILITY struct usb_bus *usb_busses = NULL;
 
 #define compat_err(e) -(errno=libusb_to_errno(e))
 
@@ -77,9 +77,9 @@ static int libusb_to_errno(int result)
 	case LIBUSB_ERROR_BUSY:
 		return EBUSY;
 	case LIBUSB_ERROR_TIMEOUT:
-		return ETIMEDOUT;
+		return EIO;
 	case LIBUSB_ERROR_OVERFLOW:
-		return EOVERFLOW;
+		return EINVAL;
 	case LIBUSB_ERROR_PIPE:
 		return EPIPE;
 	case LIBUSB_ERROR_INTERRUPTED:
@@ -163,7 +163,7 @@ API_EXPORTED void usb_set_debug(int level)
 		libusb_set_debug(ctx, 3);
 }
 
-API_EXPORTED char *usb_strerror(void)
+DEFAULT_VISIBILITY char * LIBUSB_CALL usb_strerror(void)
 {
 	return strerror(errno);
 }
@@ -643,12 +643,12 @@ API_EXPORTED int usb_find_devices(void)
 	return changes;
 }
 
-API_EXPORTED struct usb_bus *usb_get_busses(void)
+DEFAULT_VISIBILITY struct usb_bus * LIBUSB_CALL usb_get_busses(void)
 {
 	return usb_busses;
 }
 
-API_EXPORTED usb_dev_handle *usb_open(struct usb_device *dev)
+DEFAULT_VISIBILITY usb_dev_handle * LIBUSB_CALL usb_open(struct usb_device *dev)
 {
 	int r;
 	usbi_dbg("");
@@ -682,7 +682,7 @@ API_EXPORTED int usb_close(usb_dev_handle *dev)
 	return 0;
 }
 
-API_EXPORTED struct usb_device *usb_device(usb_dev_handle *dev)
+DEFAULT_VISIBILITY struct usb_device * LIBUSB_CALL usb_device(usb_dev_handle *dev)
 {
 	return dev->device;
 }
@@ -908,7 +908,7 @@ API_EXPORTED int usb_get_driver_np(usb_dev_handle *dev, int interface,
 		snprintf(name, namelen, "dummy");
 		return 0;
 	} else if (r == 0) {
-		return -(errno=ENODATA);
+		return -(errno=EINVAL);
 	} else {
 		return compat_err(r);
 	}
@@ -921,7 +921,7 @@ API_EXPORTED int usb_detach_kernel_driver_np(usb_dev_handle *dev, int interface)
 	case LIBUSB_SUCCESS:
 		return 0;
 	case LIBUSB_ERROR_NOT_FOUND:
-		return -ENODATA;
+		return -EINVAL;
 	case LIBUSB_ERROR_INVALID_PARAM:
 		return -EINVAL;
 	case LIBUSB_ERROR_NO_DEVICE:

@@ -55,7 +55,7 @@ CFLAGS="$CFLAGS -fgnu89-inline"
 AC_COMPILE_IFELSE(AC_LANG_PROGRAM([]), inline_cflags="-fgnu89-inline", inline_cflags="")
 CFLAGS="$saved_cflags"
 
-AC_DEFINE([API_EXPORTED], [__attribute__((visibility("default")))], [Default visibility])
+AC_DEFINE([DEFAULT_VISIBILITY], [__attribute__((visibility("default")))], [Default visibility])
 AM_CFLAGS="-std=gnu99 $inline_cflags -Wall -Wundef -Wunused -Wstrict-prototypes -Werror-implicit-function-declaration -Wno-pointer-sign -Wshadow"
 AC_SUBST(AM_CFLAGS)
 
